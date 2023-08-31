@@ -1,0 +1,11 @@
+version: "3.3"
+
+services:
+  nginx:
+    build: ./nginx
+  server:
+    build: ./server
+  client:
+    build: ./client
+
+
