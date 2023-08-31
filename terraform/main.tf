@@ -60,7 +60,7 @@ resource "aws_security_group_rule" "ssh_rule" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["111.125.255.126/32"]
+  cidr_blocks       = [var.myip]
 }
 
 resource "aws_security_group_rule" "internet_ingress_rule" {
@@ -68,6 +68,15 @@ resource "aws_security_group_rule" "internet_ingress_rule" {
   type              = "ingress"
   from_port         = 443
   to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "jenkins_rule" {
+  security_group_id = aws_security_group.scribbles_vpc_sg.id
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8080
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
 }
@@ -92,9 +101,9 @@ resource "aws_instance" "scribbles_ec2" {
   key_name               = aws_key_pair.scribbles_keypair.id
   availability_zone      = "us-east-1a"
   vpc_security_group_ids = [aws_security_group.scribbles_vpc_sg.id]
-  subnet_id = aws_subnet.scribbles_vpc_sn.id
+  subnet_id              = aws_subnet.scribbles_vpc_sn.id
 
-  # user_data = filebase64("/userdata.sh")
+  user_data = filebase64("/install.sh")
 
   tags = {
     Name = "scribbles_ec2"
