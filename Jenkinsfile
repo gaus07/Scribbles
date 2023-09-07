@@ -4,6 +4,13 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'ls'
+                withCredentials([usernamePassword(credentialsId: "scribblesID", usernameVariable: "DockerHubUser", passwordVariable: "DockerHubPass")]) {
+                    sh "docker login -u ${env.DockerHubUser} -p ${env.DockerHubPass}"
+                }
+            }
+            steps {
+                sh "docker-compose build"
+                sh "docker images"
             } 
         }
 
